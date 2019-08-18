@@ -23,4 +23,6 @@ router.delete('/experience/:exp_id', profileController.deleteExperience);
 router.put('/education', profileController.addEducation);
 router.delete('/education/:edu_id', profileController.deleteEducation);
 
+router.get('/github/:username', profileController.getUserRepos);
+
 module.exports = router;

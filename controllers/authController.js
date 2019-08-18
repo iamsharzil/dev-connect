@@ -5,8 +5,6 @@ const { promisify } = require('util');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-const factory = require('./handleFactory');
-
 const User = require('../models/userModel');
 
 const signToken = id => {
@@ -110,4 +108,13 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getUser = factory.getOne(User);
+exports.getUser = catchAsync(async (req, res, next) => {
+  const user = User.findById(req.params.id);
+
+  if (!user) return next(new AppError('No user found with that ID', 404));
+
+  res.status(200).json({
+    status: 'success',
+    data: { user }
+  });
+});

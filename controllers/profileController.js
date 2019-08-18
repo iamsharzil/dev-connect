@@ -1,3 +1,5 @@
+const request = require('request');
+
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -205,5 +207,27 @@ exports.deleteEducation = catchAsync(async (req, res, next) => {
     data: {
       profile
     }
+  });
+});
+
+exports.getUserRepos = catchAsync(async (req, res, next) => {
+  const options = {
+    uri: `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc&client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}`,
+    method: 'GET',
+    headers: { 'user-agent': 'node.js' }
+  };
+
+  request(options, (error, response, body) => {
+    if (error) console.error(error);
+
+    if (response.statusCode !== 200)
+      return next(new AppError('No Github Profile found', 404));
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        body: JSON.parse(body)
+      }
+    });
   });
 });

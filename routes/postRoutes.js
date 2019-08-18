@@ -13,8 +13,14 @@ router
   .post(postController.createPost);
 
 router
-  .route('/:post_id')
+  .route('/:id')
   .get(postController.getPostById)
   .delete(postController.deletePost);
+
+router.put('/like/:id', postController.likePost);
+router.put('/unlike/:id', postController.unlikePost);
+
+router.post('/comment/:id', postController.addComment);
+router.delete('/comment/:id/:comment_id', postController.deleteComment);
 
 module.exports = router;
