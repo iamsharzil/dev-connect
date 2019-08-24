@@ -1,0 +1,8 @@
+const AuthActionTypes = {
+  SET_ALERT: 'SET_ALERT',
+  REMOVE_ALERT: 'REMOVE_ALERT',
+  REGISTER_SUCCESS: 'REGISTER_SUCCESS',
+  REGISTER_FAIL: 'REGISTER_FAIL'
+};
+
+export default AuthActionTypes;

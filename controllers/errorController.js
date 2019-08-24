@@ -10,6 +10,7 @@ const sendErrorDev = (err, req, res) => {
 };
 
 module.exports = (err, req, res, next) => {
+  console.log(req.originalUrl);
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
