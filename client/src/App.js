@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import './App.css';
@@ -10,20 +10,34 @@ import Landing from './pages/Landing/landing.component';
 import Register from './pages/Register/register.component';
 import Login from './pages/Login/login.component';
 
-const App = () => (
-  <Fragment>
-    <Navbar />
+import { store } from './redux/store';
+import { loadUser } from './redux/auth/auth.actions';
+import setAuthToken from './redux/auth/auth.utils';
 
-    <Route exact path="/" component={Landing} />
+if (localStorage.token) {
+  setAuthToken(localStorage.token);
+}
 
-    <section className="container">
-      <Alert />
-      <Switch>
-        <Route exact path="/register" component={Register} />
-        <Route exact path="/login" component={Login} />
-      </Switch>
-    </section>
-  </Fragment>
-);
+const App = () => {
+  useEffect(() => {
+    store.dispatch(loadUser());
+  }, []);
+
+  return (
+    <Fragment>
+      <Navbar />
+
+      <Route exact path="/" component={Landing} />
+
+      <section className="container">
+        <Alert />
+        <Switch>
+          <Route exact path="/register" component={Register} />
+          <Route exact path="/login" component={Login} />
+        </Switch>
+      </section>
+    </Fragment>
+  );
+};
 
 export default App;

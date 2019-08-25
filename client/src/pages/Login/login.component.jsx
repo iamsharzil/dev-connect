@@ -1,7 +1,11 @@
 import React, { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-const Register = () => {
+import { login } from '../../redux/auth/auth.actions';
+
+const Login = ({ login, isAuthenticated }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -15,11 +19,15 @@ const Register = () => {
   const onSubmit = async e => {
     e.preventDefault();
 
-    const newUser = {
+    login({
       email,
       password
-    };
+    });
   };
+
+  if (isAuthenticated) {
+    return <Redirect to="/dashboard" />;
+  }
 
   return (
     <Fragment>
@@ -35,7 +43,6 @@ const Register = () => {
             name="email"
             value={email}
             onChange={e => onChange(e)}
-            required
           />
         </div>
         <div className="form-group">
@@ -43,10 +50,8 @@ const Register = () => {
             type="password"
             placeholder="Password"
             name="password"
-            minLength="6"
             value={password}
             onChange={e => onChange(e)}
-            required
           />
         </div>
 
@@ -59,4 +64,20 @@ const Register = () => {
   );
 };
 
-export default Register;
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool
+};
+
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+const mapDispatchToProps = {
+  login
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Login);

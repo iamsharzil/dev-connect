@@ -41,6 +41,11 @@ const createSendToken = (user, statusCode, req, res) => {
 exports.signup = catchAsync(async (req, res, next) => {
   const { email } = req.body;
 
+  const user = await User.findOne({ email });
+
+  if (user)
+    return next(new AppError('User already exists with that email', 400));
+
   req.body.avatar = gravatar.url(email, {
     s: '200',
     r: 'pg',
@@ -73,11 +78,8 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and checking out if it's present
   let token;
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    token = req.headers.authorization.split(' ')[1];
+  if (req.header('x-auth-token')) {
+    token = req.header('x-auth-token');
   } else if (req.cookies.jwt && req.cookies.jwt !== 'loggedout') {
     token = req.cookies.jwt;
   }
@@ -106,6 +108,14 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   res.locals.user = currentUser;
   next();
+});
+
+exports.getAuthUser = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  res.status(200).json({
+    status: 'success',
+    data: { user }
+  });
 });
 
 exports.getUser = catchAsync(async (req, res, next) => {
